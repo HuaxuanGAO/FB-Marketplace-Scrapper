@@ -1,7 +1,6 @@
 # facebook marketplace
 from time import sleep
 import sys
-from pymysql import NULL
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.common.keys import Keys
@@ -12,8 +11,8 @@ import pymysql
 import config
 
 TEST = False
-dbclient = NULL
-driver = NULL
+dbclient = ""
+driver = ""
 
 
 def dbConnect():
@@ -114,13 +113,16 @@ def getDescription():
     return description
 
 
-def scrape_item_details(pid, link, section):
+def scrape_item_details(pid, link):
+    print("pid: {}".format(pid))
     try:
         driver.get(link)
+        # wait until the title shows
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//div[(@class="dati1w0a qt6c0cv9 hv4rvrfc discj3wi")]/div/span')))
     except Exception as e:
         print("Exception while try to get link (Product may have expired){}".format(str(e)))
         return
-
+    
     sleep(1)
     images = getImages()
     # avoid SQL parse error
@@ -134,8 +136,8 @@ def scrape_item_details(pid, link, section):
               'Date_Time': date_time, 'Location': location, 'Price': price})
     try:
         with dbclient.cursor() as cur:
-            sql = "INSERT INTO product (title, description, time, location, price) VALUES('{}','{}','{}','{}','{}')".format(
-                title, description, date_time, location, price)
+            sql = "INSERT INTO product (pid, title, description, time, location, price) VALUES('{}','{}','{}','{}','{}','{}')".format(
+                pid, title, description, date_time, location, price)
             # print(sql)
             cur.execute(sql)
             dbclient.commit()
@@ -172,4 +174,4 @@ if __name__ == '__main__':
         for category in categories:
             links = getNewLinks(category, 100)
             for pid, link in links:
-                scrape_item_details(pid, link, category)
+                scrape_item_details(pid, link)

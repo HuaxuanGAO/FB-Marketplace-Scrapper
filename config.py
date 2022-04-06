@@ -1,9 +1,6 @@
-# MySQL config 
-HOST = 'localhost'
+HOST = ''
 USER = ''
-PASS = ''
 DB = ''
-# Facebook login config
-MAIN_URL = 'https://www.facebook.com'
-EMAIL = ''
-PASSWORD = ''
+PASS = ''
+ACCOUNTS = []
+MAIN_URL = "https://www.facebook.com"

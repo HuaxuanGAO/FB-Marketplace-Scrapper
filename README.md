@@ -4,8 +4,9 @@
 
 # How to run
 - Install dependencies
-- Fill in the DB host, username, password
-- Fill in the Facebook account details (need to login to see products)
+- Modify `config.py` to fill in the DB host, username, password
+- Modify `config.py` to fill in the Facebook accounts details (need to login to see products)
+  - The format should be `ACCOUNTS=[(EMAIL1, PASS1), (EMAIL2, PASS2), ...]`
 - Create the DB database and tables defined in the schemas.txt
 - Get product links: python scrape_links.py
 - Get product details: python scrape_details.py

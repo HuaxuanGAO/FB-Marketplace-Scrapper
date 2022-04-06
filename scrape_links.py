@@ -10,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import pymysql
 import config
 
+account_id = 0
 
 def dbConnect():
     try:
@@ -33,15 +34,16 @@ def log_in():
     try:
         driver.get(config.MAIN_URL)
         sleep(2)
+        email, password = config.ACCOUNTS[account_id]
         email_input = driver.find_element_by_id("email")
-        email_input.send_keys(config.EMAIL)
+        email_input.send_keys(email)
         sleep(0.5)
         password_input = driver.find_element_by_id("pass")
-        password_input.send_keys(config.PASSWORD)
+        password_input.send_keys(password)
         sleep(0.5)
         login_button = driver.find_element_by_xpath("//*[@type='submit']")
         login_button.click()
-        print("Successfully logged in! (sleep for 5 secs)")
+        print("Successfully logged in! (sleep for 3 secs)")
         sleep(3)
     except Exception as e:
         print('Some exception occurred while trying to find username or password field')
@@ -74,6 +76,8 @@ def scrape_item_links(category):
 
     for item in full_items_list:
         url = item.get_attribute('href')
+        url = url.split('?')[0]
+        
         try:
             with dbclient.cursor() as cur:
                 sql = "INSERT INTO link (url, category) VALUES('{}', '{}')".format(
@@ -98,3 +102,4 @@ if __name__ == '__main__':
         print("Processing {}".format(category))
         driver.get(config.MAIN_URL)
         scrape_item_links(category)
+    driver.quit()
